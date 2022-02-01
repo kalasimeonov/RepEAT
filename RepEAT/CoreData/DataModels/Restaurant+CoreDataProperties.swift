@@ -17,7 +17,7 @@ extension Restaurant {
     }
 
     @NSManaged public var averageRating: Double
-    @NSManaged public var name: String
+    @NSManaged public var name: String?
     @NSManaged public var reviews: NSSet?
 
 }

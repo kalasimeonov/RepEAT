@@ -31,12 +31,22 @@ class AdminUsersTableViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "AdminUserCell")
         tableView.backgroundColor = .systemYellow
     }
-    @IBAction func addUserButtonPressed(_ sender: UIBarButtonItem) {
+    
+    func presentAddUserScreen() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let addNewUserViewController = storyboard.instantiateViewController(identifier: "AddUserViewController") as AddUserViewController
         addNewUserViewController.delegate = self
 
         self.show(addNewUserViewController, sender: self)
+    }
+    
+    func presentUpdateUserScreen(for user: UserModel) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let updateUserViewController = storyboard.instantiateViewController(identifier: "UpdateUser") as UpdateUserViewController
+        updateUserViewController.user = user
+        updateUserViewController.delegate = self
+
+        self.show(updateUserViewController, sender: self)
     }
     
     // MARK: - Table view data source
@@ -53,8 +63,16 @@ class AdminUsersTableViewController: UITableViewController {
 
         return cell
     }
+    @IBAction func addUserButtonPressed(_ sender: UIBarButtonItem) {
+        presentAddUserScreen()
+    }
     
     // MARK: - Table view delegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presentUpdateUserScreen(for: users[indexPath.row])
+    }
+    
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }

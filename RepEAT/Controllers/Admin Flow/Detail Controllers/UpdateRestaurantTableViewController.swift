@@ -50,6 +50,7 @@ class UpdateRestaurantTableViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        reviewsTableView.dataSource = self
         reviewsTableView.delegate = self
         reviewsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "ReviewEditCell")
         reviewsTableView.backgroundColor = .systemYellow

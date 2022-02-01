@@ -11,10 +11,14 @@ class AddReviewViewController: UIViewController {
     
     let coreData = CoreDataStack.shared
     
+    var name: String?
     var rating: Rating?
     var comment: String?
     var date: Date?
+    var id: UUID?
+    var isUpdate: Bool = false
     
+    var delegate: UpdateDelegate?
     
     @IBOutlet weak var restaurantNameLabel: UILabel!
     @IBOutlet weak var commentTextField: UITextField!
@@ -25,7 +29,7 @@ class AddReviewViewController: UIViewController {
     }
     
     func setRestaurant(name: String) {
-        restaurantNameLabel.text = name
+        self.name = name
     }
     
     private func presentReviewNotFilledAlert() {
@@ -40,6 +44,9 @@ class AddReviewViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        guard self.name != nil else { return }
+        restaurantNameLabel.text = self.name
     }
     
     @IBAction func oneButtonPressed(_ sender: UIButton) {
@@ -57,6 +64,7 @@ class AddReviewViewController: UIViewController {
     @IBAction func fiveButtonPressed(_ sender: UIButton) {
         rating = .five
     }
+    
     @IBAction func saveButtonPressed(_ sender: UIButton) {
         guard let restaurant = coreData.get(restaurant: restaurantNameLabel.text ?? ""),
               rating != nil,
@@ -65,9 +73,16 @@ class AddReviewViewController: UIViewController {
             presentReviewNotFilledAlert()
             return
         }
-        coreData.createReview(rating: rating!, comment: comment, date: date!, restaurant: restaurant)
+        guard !isUpdate else {
+            coreData.updateReview(for: id!, comment: commentTextField.text, rating: rating!, date: date!)
+            coreData.updateData()
+            return
+        }
+        coreData.createReview(rating: rating!, comment: commentTextField.text, date: date!, restaurant: restaurant)
         coreData.updateData()
+        delegate?.didUpdateData()
     }
+    
     @IBAction func datePickerChanged(_ sender: UIDatePicker) {
         date = datePicker.date
     }

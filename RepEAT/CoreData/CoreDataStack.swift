@@ -51,10 +51,10 @@ class CoreDataStack {
         self.reviews = fetchReviews()
         self.users = fetchUsers()
         self.restaurants = fetchRestaurants()
-        saveContext()
         updateUserModels()
         updateReviewModels()
         updateRestaurantModels()
+        saveContext()
     }
     
     func updateUserModels() {
@@ -89,12 +89,12 @@ class CoreDataStack {
                                 return .one
                             }
                         }()
-                        parsedReviews.append(ReviewModel(id: UUID(), date: parsedReview.date , rating: parsedRating, comment: parsedReview.comment ?? ""))
+                        parsedReviews.append(ReviewModel(id: UUID(), date: parsedReview.date , rating: parsedRating, comment: parsedReview.comment ?? "", restaurantName: restaurant.name ?? ""))
                     }
                 })
-                parsedRestaurants.append(RestaurantModel(name: restaurant.name, reviews: parsedReviews))
+                parsedRestaurants.append(RestaurantModel(name: restaurant.name ?? "", reviews: parsedReviews))
             } else {
-                parsedRestaurants.append(RestaurantModel(name: restaurant.name, reviews: []))
+                parsedRestaurants.append(RestaurantModel(name: restaurant.name ?? "", reviews: []))
             }
         }
         self.restaurantModels = parsedRestaurants
@@ -119,7 +119,11 @@ class CoreDataStack {
                     return .one
                 }
             }()
-            parsedReviews.append(ReviewModel(id: UUID(), date: review.date, rating: parsedRating, comment: review.comment ?? ""))
+            parsedReviews.append(ReviewModel(id: UUID(),
+                                             date: review.date,
+                                             rating: parsedRating,
+                                             comment: review.comment ?? "",
+                                             restaurantName: review.restaurant?.name ?? ""))
         }
         self.reviewModels = parsedReviews
     }
@@ -253,6 +257,7 @@ extension CoreDataStack {
         newReview.comment = comment
         newReview.date = date
         newReview.id = UUID()
+        restaurant.addToReviews(newReview)
         updateData()
     }
     

@@ -42,6 +42,7 @@ class AdminRestaurantsTableViewController: UITableViewController {
             let isRestaurantAvailable = (coreDataStack.get(restaurant: answer) == nil)
             if isRestaurantAvailable {
                 restaurants.append(RestaurantModel(name: answer, reviews: []))
+                coreDataStack.create(restaurant: answer, reviews: [])
                 self.tableView.performBatchUpdates({
                     self.tableView.insertRows(at: [IndexPath(row: self.restaurants.count - 1,
                                                              section: 0)],

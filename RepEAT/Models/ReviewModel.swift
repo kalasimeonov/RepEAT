@@ -12,6 +12,7 @@ struct ReviewModel {
     var date: Date
     var rating: Rating
     var comment: String
+    var restaurantName: String
 }
 
 enum Rating: Int {
